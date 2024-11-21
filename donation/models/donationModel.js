@@ -11,10 +11,10 @@ const donationSchema = new mongoose.Schema(
       ref: "Donor",
       required: [true, "Donor is required"],
     },
-    campaign: {
+    studentNeed: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Campaign",
-      required: [true, "Campaign is required"],
+      ref: "StudentNeed", // Changed from Campaign to StudentNeed
+      required: [true, "Student need is required"],
     },
     anonymous: {
       type: Boolean,
