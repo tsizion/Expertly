@@ -53,16 +53,26 @@ exports.Create = catchAsync(async (req, res, next) => {
 exports.AcceptRequest = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  // Find the request by ID and update its status to "Accepted"
+  // Ensure that `req.agent.id` contains the agent's ID
+  if (!req.agent || !req.agent.id) {
+    return next(new AppError("Agent information is missing", 400));
+  }
+
+  // Find the request by ID and update its status to "Accepted" and set `acceptedBy` field
   const updatedRequest = await SellingRequest.findByIdAndUpdate(
     id,
-    { status: "Accepted", updatedAt: Date.now() },
+    {
+      status: "Accepted",
+      acceptedBy: req.agent.id, // Update the acceptedBy field
+      updatedAt: Date.now(),
+    },
     {
       new: true, // Return the updated document
       runValidators: true, // Ensure validation rules are applied
     }
   );
 
+  // If no request is found, return an error
   if (!updatedRequest) {
     return next(new AppError("Selling request not found", 404));
   }

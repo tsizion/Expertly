@@ -19,11 +19,15 @@ const sellingRequestSchema = new mongoose.Schema(
       enum: ["Money", "Grain", "Equipment"], // The type of exchange: Money, Grain, or Equipment
       required: [true, "Exchange type is required"],
     },
-
     status: {
       type: String,
       enum: ["Pending", "Accepted", "Completed", "Cancelled"], // Status of the request
       default: "Pending",
+    },
+    acceptedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Agent", // Reference to the agent accepting the request
+      required: false, // Not required initially
     },
     createdAt: {
       type: Date,

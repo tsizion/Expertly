@@ -9,7 +9,7 @@ const buyingRequestSchema = new mongoose.Schema(
     },
     item: {
       type: String,
-      enum: ["Sorghum", "Oat", "Wheat", "Barley", "Sorghum", "Teff", "Rice"], // Example: Teff, Shovel, Wheat
+      enum: ["Sorghum", "Oat", "Wheat", "Barley", "Teff", "Rice"], // Example: Teff, Wheat, etc.
       required: [true, "Item name is required"],
     },
     quantity: {
@@ -26,6 +26,11 @@ const buyingRequestSchema = new mongoose.Schema(
       type: String,
       enum: ["Pending", "Accepted", "Completed", "Cancelled"], // The status of the request
       default: "Pending",
+    },
+    acceptedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Agent", // Reference to the agent accepting the request
+      required: false, // Not required initially
     },
     createdAt: {
       type: Date,
