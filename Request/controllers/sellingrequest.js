@@ -4,6 +4,20 @@ const catchAsync = require("../../ErrorHandlers/catchAsync");
 const SellingRequest = require("../models/sellingrequest");
 
 const Farmer = require("../../Farmer/models/farmerModel"); // Assuming Farmer model is here
+// Get only pending selling requests
+exports.GetPendingRequests = catchAsync(async (req, res, next) => {
+  const pendingRequests = await SellingRequest.find({
+    status: "Pending",
+  }).populate("seller");
+
+  res.status(200).json({
+    status: "success",
+    results: pendingRequests.length,
+    data: {
+      pendingRequests,
+    },
+  });
+});
 
 // Create a new selling request
 exports.Create = catchAsync(async (req, res, next) => {
@@ -32,6 +46,32 @@ exports.Create = catchAsync(async (req, res, next) => {
     status: "success",
     data: {
       sellingRequest: newRequest,
+    },
+  });
+});
+// Accept a selling request
+exports.AcceptRequest = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  // Find the request by ID and update its status to "Accepted"
+  const updatedRequest = await SellingRequest.findByIdAndUpdate(
+    id,
+    { status: "Accepted", updatedAt: Date.now() },
+    {
+      new: true, // Return the updated document
+      runValidators: true, // Ensure validation rules are applied
+    }
+  );
+
+  if (!updatedRequest) {
+    return next(new AppError("Selling request not found", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: "Selling request has been accepted",
+    data: {
+      sellingRequest: updatedRequest,
     },
   });
 });

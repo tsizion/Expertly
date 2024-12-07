@@ -112,6 +112,47 @@ exports.ReadOne = catchAsync(async (req, res, next) => {
   });
 });
 
+// Accept a buying request
+exports.AcceptRequest = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  // Find the request by ID and update its status to "Accepted"
+  const updatedRequest = await BuyingRequest.findByIdAndUpdate(
+    id,
+    { status: "Accepted", updatedAt: Date.now() },
+    {
+      new: true, // Return the updated document
+      runValidators: true, // Ensure schema validation rules are applied
+    }
+  );
+
+  if (!updatedRequest) {
+    return next(new AppError("Buying request not found", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: "Buying request has been accepted",
+    data: {
+      buyingRequest: updatedRequest,
+    },
+  });
+});
+// Get only pending buying requests
+exports.GetPendingRequests = catchAsync(async (req, res, next) => {
+  const pendingRequests = await BuyingRequest.find({
+    status: "Pending",
+  }).populate("buyer");
+
+  res.status(200).json({
+    status: "success",
+    results: pendingRequests.length,
+    data: {
+      pendingRequests,
+    },
+  });
+});
+
 // Delete a buying request
 exports.Delete = catchAsync(async (req, res, next) => {
   const buyingRequest = await BuyingRequest.findById(req.params.id);

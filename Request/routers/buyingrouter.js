@@ -6,10 +6,15 @@ const {
   ReadOne,
   Update,
   Delete,
+  GetPendingRequests,
+  AcceptRequest,
 } = require("../controllers/buyinyrequest");
 
 router.post("/", Create); // Protecting the Create route
+router.post("/AcceptRequest", AcceptRequest); // Protecting the Create route
+
 router.get("/", ReadAll);
+router.get("/Pending", GetPendingRequests);
 router.get("/:id", ReadOne);
 
 router.patch("/:id", Update);
