@@ -7,6 +7,11 @@ const itemSchema = new mongoose.Schema(
       ref: "Farmer", // Reference to the farmer making the selling request
       required: [true, "Seller reference is required"],
     },
+    agentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Agent", // Reference to the agent who registered the item
+      required: [true, "Agent reference is required"],
+    },
     name: {
       type: String,
       enum: [

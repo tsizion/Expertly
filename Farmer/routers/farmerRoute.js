@@ -12,9 +12,9 @@ const {
 const { protectAgent } = require("../../middleware/authorization");
 
 router.post("/", protectAgent, Create);
-router.get("/", ReadAll);
-router.get("/", protectAgent, ReadAllByAgent);
-router.get("/", protectAgent, ReadOneByAgent);
+router.get("/ReadAll", ReadAll);
+router.get("/ReadAllByAgent", protectAgent, ReadAllByAgent);
+router.get("/ReadOneByAgent", protectAgent, ReadOneByAgent);
 
 router.get("/:id", ReadOne);
 router.patch("/:id", Update);

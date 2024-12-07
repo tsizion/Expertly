@@ -3,6 +3,7 @@ const AppError = require("../../ErrorHandlers/appError");
 const catchAsync = require("../../ErrorHandlers/catchAsync");
 const Item = require("../models/item2");
 const Farmer = require("../../Farmer/models/farmerModel"); // Assuming the Farmer model exists
+const Agent = require("../../Agent/models/Agent"); // Assuming the Agent model exists
 
 // Create a new item
 exports.Create = catchAsync(async (req, res, next) => {
@@ -19,6 +20,15 @@ exports.Create = catchAsync(async (req, res, next) => {
     return next(new AppError("Seller not found", 404));
   }
 
+  // Get agentId from the authenticated agent
+  const agentId = req.agent.id; // Assuming req.agent.id holds the authenticated agent's ID
+
+  // Check if the agent exists
+  const agentExists = await Agent.findById(agentId);
+  if (!agentExists) {
+    return next(new AppError("Agent not found", 404));
+  }
+
   // Validate imageUrls (if provided)
   if (imageUrls && !Array.isArray(imageUrls)) {
     return next(new AppError("imageUrls must be an array", 400));
@@ -26,6 +36,7 @@ exports.Create = catchAsync(async (req, res, next) => {
 
   const newItem = await Item.create({
     seller,
+    agentId, // Added the agentId here
     name,
     quantity,
     priceInBirr,
@@ -50,6 +61,19 @@ exports.Update = catchAsync(async (req, res, next) => {
     return next(new AppError("Validation failed", 400, errors.array()));
   }
 
+  // Find the item by ID
+  const item = await Item.findById(id);
+  if (!item) {
+    return next(new AppError("Item not found", 404));
+  }
+
+  // Check if the logged-in agent's ID matches the item agentId
+  if (item.agentId.toString() !== req.agent.id) {
+    return next(
+      new AppError("You are not authorized to update this item", 403)
+    );
+  }
+
   // Check if seller exists if `seller` is being updated
   if (updateFields.seller) {
     const sellerExists = await Farmer.findById(updateFields.seller);
@@ -63,14 +87,11 @@ exports.Update = catchAsync(async (req, res, next) => {
     return next(new AppError("imageUrls must be an array", 400));
   }
 
+  // Update the item with the new data
   const updatedItem = await Item.findByIdAndUpdate(id, updateFields, {
     new: true,
     runValidators: true,
   }).populate("seller");
-
-  if (!updatedItem) {
-    return next(new AppError("Item not found", 404));
-  }
 
   res.status(200).json({
     status: "success",
