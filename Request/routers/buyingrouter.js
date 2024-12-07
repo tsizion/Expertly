@@ -6,12 +6,12 @@ const {
   ReadOne,
   Update,
   Delete,
-} = require("../controllers/campaignControllers");
+} = require("../controllers/buyinyrequest");
 
-router.post("/", Create);
-
+router.post("/", Create); // Protecting the Create route
 router.get("/", ReadAll);
 router.get("/:id", ReadOne);
+
 router.patch("/:id", Update);
 router.delete("/:id", Delete);
 

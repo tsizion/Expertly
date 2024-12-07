@@ -1,46 +1,45 @@
 const AppError = require("../../ErrorHandlers/appError");
 const authUtils = require("../../Utils/authUtils");
 const catchAsync = require("../../ErrorHandlers/catchAsync");
-const User = require("../../Request/models/usermodel");
 const Admin = require("../../admin/models/adminModel");
+const Agent = require("../../Agent/models/Agent");
+// exports.Login = catchAsync(async (req, res, next) => {
+//   const { email, phoneNumber, password } = req.body;
 
-exports.Login = catchAsync(async (req, res, next) => {
-  const { email, phoneNumber, password } = req.body;
+//   if ((!email && !phoneNumber) || !password) {
+//     return next(
+//       new AppError(
+//         "Email or phone number and password must be provided to log in.",
+//         401
+//       )
+//     );
+//   }
 
-  if ((!email && !phoneNumber) || !password) {
-    return next(
-      new AppError(
-        "Email or phone number and password must be provided to log in.",
-        401
-      )
-    );
-  }
+//   let user = null;
 
-  let user = null;
+//   if (email) {
+//     user = await User.findOne({ email }).select("+password");
+//   } else if (phoneNumber) {
+//     user = await User.findOne({ phoneNumber }).select("+password");
+//   }
 
-  if (email) {
-    user = await User.findOne({ email }).select("+password");
-  } else if (phoneNumber) {
-    user = await User.findOne({ phoneNumber }).select("+password");
-  }
+//   if (!user) {
+//     return next(new AppError("User not found!", 404));
+//   }
 
-  if (!user) {
-    return next(new AppError("User not found!", 404));
-  }
+//   const isPasswordCorrect = await user.correctPassword(password);
 
-  const isPasswordCorrect = await user.correctPassword(password);
-
-  if (isPasswordCorrect) {
-    const token = await authUtils.signToken(user._id);
-    res.status(200).json({
-      status: "success",
-      token,
-      user,
-    });
-  } else {
-    return next(new AppError("Incorrect phone number or password.", 403));
-  }
-});
+//   if (isPasswordCorrect) {
+//     const token = await authUtils.signToken(user._id);
+//     res.status(200).json({
+//       status: "success",
+//       token,
+//       user,
+//     });
+//   } else {
+//     return next(new AppError("Incorrect phone number or password.", 403));
+//   }
+// });
 
 exports.LoginAdmin = catchAsync(async (req, res, next) => {
   const { email, phoneNumber, password } = req.body;
@@ -78,4 +77,39 @@ exports.LoginAdmin = catchAsync(async (req, res, next) => {
   } else {
     return next(new AppError("Incorrect phone number or password.", 403));
   }
+});
+
+exports.LoginAgent = catchAsync(async (req, res, next) => {
+  const { phoneNumber, password } = req.body;
+
+  // Validate required fields
+  if (!phoneNumber || !password) {
+    return next(
+      new AppError("Phone number and password must be provided to log in.", 401)
+    );
+  }
+
+  // Find the agent by phone number
+  const agent = await Agent.findOne({ phoneNumber }).select("+password");
+
+  // Check if agent exists
+  if (!agent) {
+    return next(new AppError("Agent not found!", 404));
+  }
+
+  // Check if the password is correct
+  const isPasswordCorrect = await agent.correctPassword(password);
+  if (!isPasswordCorrect) {
+    return next(new AppError("Incorrect phone number or password.", 403));
+  }
+
+  // Generate a token
+  const token = await authUtils.signToken(agent._id);
+
+  // Respond with success
+  res.status(200).json({
+    status: "success",
+    token,
+    agent, // Include agent data in the response
+  });
 });

@@ -44,6 +44,11 @@ const transactionSchema = new mongoose.Schema(
       enum: ["Pending", "Completed"],
       default: "Pending",
     },
+    agentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Agent", // Assuming you have an Agent model
+      required: [true, "Agent is required"], // Assuming every transaction must have an agent
+    },
     createdAt: {
       type: Date,
       default: Date.now,

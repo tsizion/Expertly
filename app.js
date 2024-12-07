@@ -23,11 +23,15 @@ connectDB();
 app.use("/api/v1/station", require("./station/routers/StationRouter"));
 app.use("/api/v1/agent", require("./Agent/routers/agentRouter"));
 app.use("/api/v1/farmer", require("./Farmer/routers/farmerRoute"));
-app.use(
-  "/api/v1/requestforselling",
-  require("./Request/routers/sellingreqRouter")
-);
+app.use("/api/v1/sell", require("./Request/routers/sellingreqRouter"));
 app.use("/api/v1/item", require("./Item/routers/ItemRouter"));
+app.use("/api/v1/buy", require("./Request/routers/buyingrouter"));
+app.use(
+  "/api/v1/transaction",
+  require("./Transction/routers/transactionRoute")
+);
+app.use("/api/v1/login", require("./Login/Router/Login"));
+app.use("/api/v1/admin", require("./admin/routers/adminRouter"));
 
 // Default route
 app.get("/", (req, res) => {

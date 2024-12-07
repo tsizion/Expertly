@@ -2,7 +2,6 @@ const { validationResult } = require("express-validator");
 const AppError = require("../../ErrorHandlers/appError");
 const catchAsync = require("../../ErrorHandlers/catchAsync");
 const Item = require("../models/item2");
-
 const Farmer = require("../../Farmer/models/farmerModel"); // Assuming the Farmer model exists
 
 // Create a new item
@@ -12,7 +11,7 @@ exports.Create = catchAsync(async (req, res, next) => {
     return next(new AppError("Validation failed", 400, errors.array()));
   }
 
-  const { seller, name, quantity, priceInBirr } = req.body;
+  const { seller, name, quantity, priceInBirr, imageUrls } = req.body;
 
   // Check if seller exists
   const sellerExists = await Farmer.findById(seller);
@@ -20,11 +19,17 @@ exports.Create = catchAsync(async (req, res, next) => {
     return next(new AppError("Seller not found", 404));
   }
 
+  // Validate imageUrls (if provided)
+  if (imageUrls && !Array.isArray(imageUrls)) {
+    return next(new AppError("imageUrls must be an array", 400));
+  }
+
   const newItem = await Item.create({
     seller,
     name,
     quantity,
     priceInBirr,
+    imageUrls, // Handle image URLs here
   });
 
   res.status(201).json({
@@ -51,6 +56,11 @@ exports.Update = catchAsync(async (req, res, next) => {
     if (!sellerExists) {
       return next(new AppError("Seller not found", 404));
     }
+  }
+
+  // Validate imageUrls (if provided in the update request)
+  if (updateFields.imageUrls && !Array.isArray(updateFields.imageUrls)) {
+    return next(new AppError("imageUrls must be an array", 400));
   }
 
   const updatedItem = await Item.findByIdAndUpdate(id, updateFields, {

@@ -25,10 +25,13 @@ const itemSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    priceInBirr: {
-      type: Number,
-    },
 
+    imageUrls: [
+      {
+        type: String,
+        required: false, // Optional field to store URLs of images related to the agent
+      },
+    ],
     createdAt: {
       type: Date,
       default: Date.now,
