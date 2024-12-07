@@ -8,9 +8,18 @@ const buyingRequestSchema = new mongoose.Schema(
       required: [true, "Buyer reference is required"],
     },
     item: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Item", // Reference to the item being requested (the item they want to buy)
-      required: [true, "Item is required"],
+      type: String,
+      enum: [
+        "Sorghum",
+        "Oat",
+        "Wheat",
+        "Barley",
+        "Sorghum",
+        "Shovel",
+        "Teff",
+        "Rice",
+      ], // Example: Teff, Shovel, Wheat
+      required: [true, "Item name is required"],
     },
     quantity: {
       type: Number,

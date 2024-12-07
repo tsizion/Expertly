@@ -21,10 +21,6 @@ exports.Create = catchAsync(async (req, res, next) => {
   }
 
   // Check if item exists
-  const itemExists = await Item.findById(item);
-  if (!itemExists) {
-    return next(new AppError("Item not found", 404));
-  }
 
   // Create the buying request
   const newBuyingRequest = await BuyingRequest.create({
@@ -61,12 +57,6 @@ exports.Update = catchAsync(async (req, res, next) => {
   }
 
   // Check if item exists if `item` is being updated
-  if (updateFields.item) {
-    const itemExists = await Item.findById(updateFields.item);
-    if (!itemExists) {
-      return next(new AppError("Item not found", 404));
-    }
-  }
 
   const updatedBuyingRequest = await BuyingRequest.findByIdAndUpdate(
     id,

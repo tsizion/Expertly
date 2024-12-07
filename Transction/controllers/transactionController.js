@@ -66,6 +66,7 @@ exports.Create = async (req, res) => {
     // Check if the references (seller, buyer, items, and agent) exist
     await checkReferencesExist(seller, buyer, itemSold, itemBought, agentId);
 
+    // Create a new transaction
     const newTransaction = new Transaction({
       seller,
       buyer,
@@ -80,6 +81,23 @@ exports.Create = async (req, res) => {
     });
 
     const transaction = await newTransaction.save();
+
+    // Update seller and buyer's transaction list
+    const sellerUpdate = Farmer.findByIdAndUpdate(
+      seller,
+      { $push: { transactions: transaction._id } },
+      { new: true } // Return the updated document
+    );
+
+    const buyerUpdate = Farmer.findByIdAndUpdate(
+      buyer,
+      { $push: { transactions: transaction._id } },
+      { new: true } // Return the updated document
+    );
+
+    // Wait for both updates to complete
+    await Promise.all([sellerUpdate, buyerUpdate]);
+
     res.status(201).json({
       status: "success",
       data: transaction,
