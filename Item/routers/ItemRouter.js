@@ -6,7 +6,7 @@ const {
   ReadOne,
   Update,
   Delete,
-} = require("../controllers/donationController");
+} = require("../controllers/itemController");
 
 router.post("/", Create);
 router.get("/", ReadAll);

@@ -6,10 +6,11 @@ const {
   ReadOne,
   Update,
   Delete,
-} = require("../controllers/userController");
-const { protectUser, protectAdmin } = require("../../middleware/authorization");
+  BulkCreate,
+} = require("../controllers/agentController");
+
+router.get("/", ReadAll);
 router.post("/", Create);
-router.get("/", protectAdmin, ReadAll);
 router.get("/:id", ReadOne);
 router.patch("/:id", Update);
 router.delete("/:id", Delete);

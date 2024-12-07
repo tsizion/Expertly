@@ -20,14 +20,14 @@ app.use(bodyParser.json());
 
 connectDB();
 
-app.use("/api/v1/donor", require("./Farmer/routers/donorRoutes"));
-app.use("/api/v1/user", require("./Request/routers/userRouter"));
-app.use("/api/v1/category", require("./Agent/routers/categoryRouters"));
-app.use("/api/v1/campaign", require("./Agent/routers/CampaignRouters"));
-app.use("/api/v1/donation", require("./Item/routers/doantionRouters"));
-app.use("/api/v1/admin", require("./admin/routers/adminRouter"));
-app.use("/api/v1/login", require("./Login/Router/Login"));
-app.use("/api/v1/order", require("./Item/routers/order"));
+app.use("/api/v1/station", require("./station/routers/StationRouter"));
+app.use("/api/v1/agent", require("./Agent/routers/agentRouter"));
+app.use("/api/v1/farmer", require("./Farmer/routers/farmerRoute"));
+app.use(
+  "/api/v1/requestforselling",
+  require("./Request/routers/sellingreqRouter")
+);
+app.use("/api/v1/item", require("./Item/routers/ItemRouter"));
 
 // Default route
 app.get("/", (req, res) => {

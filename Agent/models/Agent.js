@@ -20,12 +20,17 @@ const agentSchema = new mongoose.Schema(
       enum: ["Active", "Inactive"],
       default: "Active",
     },
-    farmersRegistered: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Farmer", // References farmers registered by the agent
-      },
-    ],
+    // farmersRegistered: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Farmer", // References farmers registered by the agent
+    //   },
+    // ],
+    station: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Station", // References the station the agent is assigned to
+      required: true, // Ensure the agent is always associated with a station
+    },
     itemsScreened: [
       {
         type: mongoose.Schema.Types.ObjectId,

@@ -1,12 +1,11 @@
 const { validationResult } = require("express-validator");
 const AppError = require("../../ErrorHandlers/appError");
 const catchAsync = require("../../ErrorHandlers/catchAsync");
-const User = require("../models/usermodel");
+const Donor = require("../models/transactionmodel");
 
-// Create a new user
+// Create a new donor
 exports.Create = catchAsync(async (req, res, next) => {
-  const { firstName, lastName, email, phoneNumber, password, status } =
-    req.body;
+  const { FullName, email, phoneNumber, status, isAnonymous } = req.body;
 
   // Validate request data using express-validator
   const errors = validationResult(req);
@@ -14,57 +13,56 @@ exports.Create = catchAsync(async (req, res, next) => {
     return next(new AppError("Validation failed", 400, errors.array()));
   }
 
-  // Create user data object
-  const userData = {
-    firstName,
-    lastName,
+  // Create donor data object
+  const donorData = {
+    FullName,
     email,
     phoneNumber,
-    password,
     status,
+    isAnonymous,
   };
 
-  // Create the user document in MongoDB
-  const newUser = await User.create(userData);
+  // Create the donor document in MongoDB
+  const newDonor = await Donor.create(donorData);
 
   res.status(201).json({
     status: "success",
     data: {
-      user: newUser,
+      donor: newDonor,
     },
   });
 });
 
-// Read all users
+// Read all donors
 exports.ReadAll = catchAsync(async (req, res, next) => {
-  const users = await User.find().sort({ createdAt: -1 });
+  const donors = await Donor.find().sort({ createdAt: -1 });
 
   res.status(200).json({
     status: "success",
-    results: users.length,
+    results: donors.length,
     data: {
-      users,
+      donors,
     },
   });
 });
 
-// Read a single user by ID
+// Read a single donor by ID
 exports.ReadOne = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+  const donor = await Donor.findById(req.params.id);
 
-  if (!user) {
-    return next(new AppError("User not found", 404));
+  if (!donor) {
+    return next(new AppError("Donor not found", 404));
   }
 
   res.status(200).json({
     status: "success",
     data: {
-      user,
+      donor,
     },
   });
 });
 
-// Update user details
+// Update donor details
 exports.Update = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const updateFields = req.body;
@@ -75,42 +73,38 @@ exports.Update = catchAsync(async (req, res, next) => {
     return next(new AppError("Validation failed", 400, errors.array()));
   }
 
-  // Find the user by ID and update the specified fields
-  const updatedUser = await User.findByIdAndUpdate(id, updateFields, {
+  // Find the donor by ID and update the specified fields
+  const updatedDonor = await Donor.findByIdAndUpdate(id, updateFields, {
     new: true,
     runValidators: true,
   });
 
-  if (!updatedUser) {
-    return next(new AppError("User not found", 404));
+  if (!updatedDonor) {
+    return next(new AppError("Donor not found", 404));
   }
 
   res.status(200).json({
     status: "success",
     data: {
-      user: updatedUser,
+      donor: updatedDonor,
     },
   });
 });
 
-// Delete a user by ID
+// Delete a donor by ID
 exports.Delete = catchAsync(async (req, res, next) => {
-  // Find the user by ID
-  const user = await User.findById(req.params.id);
+  const donor = await Donor.findById(req.params.id);
 
-  if (!user) {
-    return next(new AppError("User not found", 404));
+  if (!donor) {
+    return next(new AppError("Donor not found", 404));
   }
 
-  // Store the user's full name for the success message
-  const fullName = `${user.firstName} ${user.lastName}`;
+  // Delete the donor
+  await Donor.findByIdAndDelete(req.params.id);
 
-  // Delete the user
-  await User.findByIdAndDelete(req.params.id);
-
-  res.status(200).json({
+  res.status(204).json({
     status: "success",
-    message: `${fullName} has been successfully deleted.`,
+    message: "Donor successfully deleted",
     data: null,
   });
 });

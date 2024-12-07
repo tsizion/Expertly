@@ -1,38 +1,35 @@
 const mongoose = require("mongoose");
 
-const requestSchema = new mongoose.Schema(
+const sellingRequestSchema = new mongoose.Schema(
   {
-    farmer: {
+    seller: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Farmer", // References the farmer making the request
-      required: [true, "Farmer reference is required"],
+      ref: "Farmer", // Reference to the farmer making the selling request
+      required: [true, "Seller reference is required"],
     },
     itemName: {
       type: String,
-      required: [true, "Item Name is required"],
+      required: [true, "Item is required"],
     },
-    desiredTrade: {
+    quantity: {
+      type: Number,
+    },
+    exchangeType: {
       type: String,
-      enum: ["Money", "Grain", "Equipment"],
-      required: [true, "Desired trade type is required"],
+      enum: ["Money", "Grain", "Equipment"], // The type of exchange: Money, Grain, or Equipment
+      required: [true, "Exchange type is required"],
     },
+
     status: {
       type: String,
-      enum: ["Pending", "Approved", "Rejected", "Completed"],
+      enum: ["Pending", "Accepted", "Completed", "Cancelled"], // Status of the request
       default: "Pending",
     },
-    agentAssigned: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Agent", // References the agent assigned to handle the request
-    },
-    screeningPassed: {
-      type: Boolean,
-      default: false, // Updated after item screening by an agent
-    },
-    callCenterNote: {
-      type: String, // Optional notes from the call center for additional context
-    },
     createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    updatedAt: {
       type: Date,
       default: Date.now,
     },
@@ -40,6 +37,6 @@ const requestSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Request = mongoose.model("Request", requestSchema);
+const SellingRequest = mongoose.model("SellingRequest", sellingRequestSchema);
 
-module.exports = Request;
+module.exports = SellingRequest;

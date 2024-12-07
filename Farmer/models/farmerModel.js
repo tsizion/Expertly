@@ -35,12 +35,6 @@ const farmerSchema = new mongoose.Schema(
         ref: "Transaction", // References transactions the farmer participated in
       },
     ],
-    items: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Item", // References items the farmer listed for sale
-      },
-    ],
   },
   { timestamps: true }
 );

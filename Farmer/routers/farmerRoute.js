@@ -6,12 +6,9 @@ const {
   ReadOne,
   Update,
   Delete,
-  BulkCreate,
-} = require("../controllers/categoryControllers");
+} = require("../controllers/farmerController");
 
 router.post("/", Create);
-router.post("/bulk", BulkCreate);
-
 router.get("/", ReadAll);
 router.get("/:id", ReadOne);
 router.patch("/:id", Update);
