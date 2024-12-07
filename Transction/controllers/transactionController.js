@@ -3,10 +3,51 @@ const Farmer = require("../../Farmer/models/farmerModel");
 const Item = require("../../Item/models/item2");
 const Agent = require("../../Agent/models/Agent"); // Assuming the agent model exists
 
-// Helper function to check if the seller, buyer, items, and agent exist
+const mongoose = require("mongoose");
 
-// Create a new transaction
-// Create a new transaction
+// Helper function to check if given IDs exist
+const checkReferencesExist = async ({
+  seller,
+  buyer,
+  itemSold,
+  itemBought,
+  agentId,
+}) => {
+  const errors = [];
+
+  if (seller) {
+    const sellerExists = await Farmer.findById(seller);
+    if (!sellerExists) errors.push(`Seller with ID ${seller} does not exist`);
+  }
+
+  if (buyer) {
+    const buyerExists = await Farmer.findById(buyer);
+    if (!buyerExists) errors.push(`Buyer with ID ${buyer} does not exist`);
+  }
+
+  if (itemSold) {
+    const itemSoldExists = await Item.findById(itemSold);
+    if (!itemSoldExists)
+      errors.push(`Item being sold with ID ${itemSold} does not exist`);
+  }
+
+  if (itemBought) {
+    const itemBoughtExists = await Item.findById(itemBought);
+    if (!itemBoughtExists)
+      errors.push(`Item being bought with ID ${itemBought} does not exist`);
+  }
+
+  if (agentId) {
+    const agentExists = await Agent.findById(agentId);
+    if (!agentExists) errors.push(`Agent with ID ${agentId} does not exist`);
+  }
+
+  // If any errors, throw an error with the accumulated messages
+  if (errors.length > 0) {
+    throw new Error(errors.join(", "));
+  }
+};
+
 exports.Create = async (req, res) => {
   try {
     const {
@@ -111,12 +152,7 @@ exports.Update = async (req, res) => {
 // Get all transactions
 exports.ReadAll = async (req, res) => {
   try {
-    const transactions = await Transaction.find()
-      .populate("seller", "fullName phoneNumber") // Populate seller details
-      .populate("buyer", "fullName phoneNumber") // Populate buyer details
-      .populate("itemSold", "name") // Populate sold item details
-      .populate("itemBought", "name") // Populate bought item details
-      .populate("agentId", "fullName"); // Populate agent details
+    const transactions = await Transaction.find();
 
     res.status(200).json({
       status: "success",

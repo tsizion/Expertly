@@ -103,14 +103,32 @@ exports.Update = catchAsync(async (req, res, next) => {
 
 // Read all items
 exports.ReadAll = catchAsync(async (req, res, next) => {
-  const items = await Item.find(); // Populate seller details
+  const items = await Item.find()
+    .populate({
+      path: "seller",
+      select: "fullName location", // Select only fullName and location from Farmer
+    })
+    .populate({
+      path: "agentId",
+      select: "name", // Optionally populate agent details if needed
+    });
+
+  // Map data to return seller's name and location as flat fields
+  const formattedItems = items.map((item) => ({
+    id: item._id,
+    name: item.name,
+    quantity: item.quantity,
+    sellerName: item.seller?.fullName || "Unknown", // Handle missing seller
+    sellerLocation: item.seller?.location || "Unknown", // Handle missing location
+    agentId: item.agentId,
+    createdAt: item.createdAt,
+    imageUrls: item.imageUrls,
+  }));
 
   res.status(200).json({
     status: "success",
-    results: items.length,
-    data: {
-      items,
-    },
+    results: formattedItems.length,
+    data: formattedItems,
   });
 });
 
