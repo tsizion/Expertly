@@ -103,7 +103,7 @@ exports.Update = catchAsync(async (req, res, next) => {
 
 // Read all items
 exports.ReadAll = catchAsync(async (req, res, next) => {
-  const items = await Item.find().populate("seller", "name contactInfo"); // Populate seller details
+  const items = await Item.find(); // Populate seller details
 
   res.status(200).json({
     status: "success",

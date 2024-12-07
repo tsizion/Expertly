@@ -12,6 +12,11 @@ const transactionSchema = new mongoose.Schema(
       ref: "Farmer",
       required: [true, "Buyer is required"],
     },
+    transactionType: {
+      type: String,
+      enum: ["Barter", "Money"],
+      required: [true, "Transaction type is required"], // Barter = exchange of goods, Money = cash exchange
+    },
     itemSold: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Item",
@@ -20,7 +25,9 @@ const transactionSchema = new mongoose.Schema(
     itemBought: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Item",
-      required: [true, "Item being bought is required"],
+      required: function () {
+        return this.transactionType === "Barter"; // Only required if transactionType is 'Barter'
+      },
     },
     amountSold: {
       type: Number,
@@ -34,11 +41,7 @@ const transactionSchema = new mongoose.Schema(
       type: Number, // The total value of the transaction in Birr
       required: [true, "Transaction value in Birr is required"],
     },
-    transactionType: {
-      type: String,
-      enum: ["Barter", "Money"],
-      required: [true, "Transaction type is required"], // Barter = exchange of goods, Money = cash exchange
-    },
+
     status: {
       type: String,
       enum: ["Pending", "Completed"],

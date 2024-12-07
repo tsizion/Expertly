@@ -4,29 +4,6 @@ const Item = require("../../Item/models/item2");
 const Agent = require("../../Agent/models/Agent"); // Assuming the agent model exists
 
 // Helper function to check if the seller, buyer, items, and agent exist
-const checkReferencesExist = async (
-  sellerId,
-  buyerId,
-  itemSoldId,
-  itemBoughtId,
-  agentId
-) => {
-  const sellerExists = await Farmer.findById(sellerId);
-  const buyerExists = await Farmer.findById(buyerId);
-  const itemSoldExists = await Item.findById(itemSoldId);
-  const itemBoughtExists = await Item.findById(itemBoughtId);
-  const agentExists = await Agent.findById(agentId); // Check if agent exists
-
-  if (
-    !sellerExists ||
-    !buyerExists ||
-    !itemSoldExists ||
-    !itemBoughtExists ||
-    !agentExists
-  ) {
-    throw new Error("Seller, buyer, item(s), or agent not found");
-  }
-};
 
 // Create a new transaction
 // Create a new transaction
