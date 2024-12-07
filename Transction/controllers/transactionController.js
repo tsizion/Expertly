@@ -82,21 +82,18 @@ exports.Create = async (req, res) => {
 
     const transaction = await newTransaction.save();
 
-    // Update seller and buyer's transaction list
-    const sellerUpdate = Farmer.findByIdAndUpdate(
+    // Update seller and buyer's transaction lists with only the transaction ID
+    await Farmer.findByIdAndUpdate(
       seller,
       { $push: { transactions: transaction._id } },
       { new: true } // Return the updated document
     );
 
-    const buyerUpdate = Farmer.findByIdAndUpdate(
+    await Farmer.findByIdAndUpdate(
       buyer,
       { $push: { transactions: transaction._id } },
       { new: true } // Return the updated document
     );
-
-    // Wait for both updates to complete
-    await Promise.all([sellerUpdate, buyerUpdate]);
 
     res.status(201).json({
       status: "success",

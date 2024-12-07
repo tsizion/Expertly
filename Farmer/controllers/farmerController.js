@@ -98,9 +98,7 @@ exports.ReadOneByAgent = catchAsync(async (req, res, next) => {
 
 // Read a single farmer by ID
 exports.ReadOne = catchAsync(async (req, res, next) => {
-  const farmer = await Farmer.findById(req.params.id)
-    .populate("registeredByAgent", "fullName phoneNumber")
-    .populate("transactions");
+  const farmer = await Farmer.findById(req.params.id);
 
   if (!farmer) {
     return next(new AppError("Farmer not found", 404));
