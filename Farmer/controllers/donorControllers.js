@@ -1,7 +1,7 @@
 const { validationResult } = require("express-validator");
 const AppError = require("../../ErrorHandlers/appError");
 const catchAsync = require("../../ErrorHandlers/catchAsync");
-const Donor = require("../models/donorModel");
+const Donor = require("../models/farmerModel");
 
 // Create a new donor
 exports.Create = catchAsync(async (req, res, next) => {

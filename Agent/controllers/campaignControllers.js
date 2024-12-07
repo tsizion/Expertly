@@ -1,9 +1,9 @@
 const { validationResult } = require("express-validator");
 const AppError = require("../../ErrorHandlers/appError");
 const catchAsync = require("../../ErrorHandlers/catchAsync");
-const Campaign = require("../models/Campaign");
+const Campaign = require("../models/Agent");
 const Category = require("../models/category");
-const User = require("../../campaign creators,/models/usermodel");
+const User = require("../../Request/models/usermodel");
 
 // Create a new campaign
 exports.Create = catchAsync(async (req, res, next) => {
