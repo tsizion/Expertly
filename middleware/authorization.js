@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
 const AppError = require("../ErrorHandlers/appError");
-const User = require("../Request/models/usermodel");
 const Admin = require("../admin/models/adminModel");
 
 // Middleware to protect routes for user authentication
-exports.protectUser = async (req, res, next) => {
+
+// Middleware to protect routes for agent authentication
+exports.protectAgent = async (req, res, next) => {
   try {
     let token;
 
@@ -26,17 +27,17 @@ exports.protectUser = async (req, res, next) => {
     // Verifying the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Extracting user id from the token payload
-    const userId = decoded.id;
+    // Extracting agent id from the token payload
+    const agentId = decoded.id;
 
-    // Find the user using the retrieved id
-    const user = await User.findById(userId);
-    if (!user) {
-      return next(new AppError("User not found.", 404));
+    // Find the agent using the retrieved id
+    const agent = await Agent.findById(agentId).populate("station"); // You can populate station if needed
+    if (!agent) {
+      return next(new AppError("Agent not found.", 404));
     }
 
-    // Attach the user to the request object for use in subsequent middleware or route handlers
-    req.user = user;
+    // Attach the agent to the request object for use in subsequent middleware or route handlers
+    req.agent = agent;
 
     next();
   } catch (error) {

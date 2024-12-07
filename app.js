@@ -46,9 +46,8 @@ app.all("*", (req, res, next) => {
 // Global error handler
 app.use(globalErrorHandler);
 
-// Start the server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 

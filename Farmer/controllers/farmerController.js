@@ -52,6 +52,52 @@ exports.ReadAll = catchAsync(async (req, res, next) => {
     },
   });
 });
+exports.ReadAllByAgent = catchAsync(async (req, res, next) => {
+  // Get the agent ID from the authenticated agent
+  const agentId = req.agent._id;
+
+  // Find farmers who are registered by the current agent
+  const farmers = await Farmer.find({ registeredByAgent: agentId })
+    .populate("registeredByAgent", "fullName phoneNumber")
+    .populate("transactions");
+
+  // If no farmers are found, return a 404 error
+  if (!farmers.length) {
+    return next(new AppError("No farmers found for this agent.", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    results: farmers.length,
+    data: {
+      farmers,
+    },
+  });
+});
+exports.ReadOneByAgent = catchAsync(async (req, res, next) => {
+  // Get the agent ID from the authenticated agent
+  const agentId = req.agent._id;
+
+  // Find the farmer by ID and ensure they are registered by the current agent
+  const farmer = await Farmer.findOne({ 
+    _id: req.params.id, 
+    registeredByAgent: agentId 
+  })
+    .populate("registeredByAgent", "fullName phoneNumber")
+    .populate("transactions");
+
+  // If no farmer is found, return a 404 error
+  if (!farmer) {
+    return next(new AppError("Farmer not found or not registered by this agent.", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      farmer,
+    },
+  });
+});
 
 // Read a single farmer by ID
 exports.ReadOne = catchAsync(async (req, res, next) => {
