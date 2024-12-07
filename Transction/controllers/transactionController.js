@@ -152,6 +152,29 @@ exports.ReadAll = async (req, res) => {
   }
 };
 
+exports.ReadOneByAgent = catchAsync(async (req, res, next) => {
+  const agentId = req.agent.id; // Extract the agent ID from the authenticated agent
+  const { id } = req.params; // Get the transaction ID from the route
+
+  // Find the transaction by ID and ensure it belongs to the authenticated agent
+  const transaction = await Transaction.findOne({ _id: id, agentId })
+    .populate("seller", "fullName phoneNumber location") // Include seller details
+    .populate("buyer", "fullName phoneNumber location") // Include buyer details
+    .populate("itemSold", "name description") // Include item sold details
+    .populate("itemBought", "name description"); // Include item bought details;
+
+  if (!transaction) {
+    return next(new AppError("No transaction found for this agent", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      transaction,
+    },
+  });
+});
+
 // Get a single transaction by ID
 exports.ReadOne = async (req, res) => {
   try {
@@ -182,6 +205,26 @@ exports.ReadOne = async (req, res) => {
     });
   }
 };
+
+exports.ReadAllByAgent = catchAsync(async (req, res, next) => {
+  const agentId = req.agent.id; // Extract agent ID from the authenticated agent
+
+  // Fetch transactions filtered by agentId
+  const transactions = await Transaction.find({ agentId })
+    .populate("seller", "fullName phoneNumber location") // Include seller details
+    .populate("buyer", "fullName phoneNumber location") // Include buyer details
+    .populate("itemSold", "name description") // Include item sold details
+    .populate("itemBought", "name description") // Include item bought details
+    .lean();
+
+  res.status(200).json({
+    status: "success",
+    results: transactions.length,
+    data: {
+      transactions,
+    },
+  });
+});
 
 // Delete a transaction
 exports.Delete = async (req, res) => {

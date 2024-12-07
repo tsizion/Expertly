@@ -11,7 +11,7 @@ const {
 } = require("../controllers/farmerController");
 const { protectAgent } = require("../../middleware/authorization");
 
-router.post("/", Create);
+router.post("/", protectAgent, Create);
 router.get("/", ReadAll);
 router.get("/", protectAgent, ReadAllByAgent);
 router.get("/", protectAgent, ReadOneByAgent);

@@ -5,23 +5,18 @@ const Farmer = require("../models/farmerModel");
 const Agent = require("../../Agent/models/Agent");
 const Transaction = require("../../Transction/models/transactionmodel");
 
-// Create a new farmer
 exports.Create = catchAsync(async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(new AppError("Validation failed", 400, errors.array()));
   }
 
-  const { fullName, phoneNumber, location, registeredByAgent, status } =
-    req.body;
+  // Extract the agent ID from the middleware (protectAgent)
+  const registeredByAgent = req.agent.id; // `req.agent` is set in the protectAgent middleware
 
-  // Check if the agent exists
-  const agentExist = await Agent.findById(registeredByAgent);
-  if (!agentExist) {
-    return next(new AppError("Agent not found", 404));
-  }
+  const { fullName, phoneNumber, location, status } = req.body;
 
-  // Create a new farmer
+  // Create a new farmer with the agent's ID from the middleware
   const newFarmer = await Farmer.create({
     fullName,
     phoneNumber,
@@ -79,16 +74,18 @@ exports.ReadOneByAgent = catchAsync(async (req, res, next) => {
   const agentId = req.agent._id;
 
   // Find the farmer by ID and ensure they are registered by the current agent
-  const farmer = await Farmer.findOne({ 
-    _id: req.params.id, 
-    registeredByAgent: agentId 
+  const farmer = await Farmer.findOne({
+    _id: req.params.id,
+    registeredByAgent: agentId,
   })
     .populate("registeredByAgent", "fullName phoneNumber")
     .populate("transactions");
 
   // If no farmer is found, return a 404 error
   if (!farmer) {
-    return next(new AppError("Farmer not found or not registered by this agent.", 404));
+    return next(
+      new AppError("Farmer not found or not registered by this agent.", 404)
+    );
   }
 
   res.status(200).json({
