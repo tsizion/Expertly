@@ -26,6 +26,8 @@ app.use("/api/v1/farmer", require("./Farmer/routers/farmerRoute"));
 app.use("/api/v1/sell", require("./Request/routers/sellingreqRouter"));
 app.use("/api/v1/item", require("./Item/routers/ItemRouter"));
 app.use("/api/v1/buy", require("./Request/routers/buyingrouter"));
+app.use("/api/v1/equipment", require("./Equipment/routers/equipment"));
+
 app.use(
   "/api/v1/transaction",
   require("./Transction/routers/transactionRoute")

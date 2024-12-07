@@ -23,7 +23,7 @@ const itemSchema = new mongoose.Schema(
         "Shovel",
         "Teff",
         "Rice",
-      ], // Example: Teff, Shovel, Wheat
+      ],
       required: [true, "Item name is required"],
     },
     quantity: {

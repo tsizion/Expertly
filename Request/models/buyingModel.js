@@ -9,16 +9,7 @@ const buyingRequestSchema = new mongoose.Schema(
     },
     item: {
       type: String,
-      enum: [
-        "Sorghum",
-        "Oat",
-        "Wheat",
-        "Barley",
-        "Sorghum",
-        "Shovel",
-        "Teff",
-        "Rice",
-      ], // Example: Teff, Shovel, Wheat
+      enum: ["Sorghum", "Oat", "Wheat", "Barley", "Sorghum", "Teff", "Rice"], // Example: Teff, Shovel, Wheat
       required: [true, "Item name is required"],
     },
     quantity: {
