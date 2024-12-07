@@ -7,7 +7,7 @@ const {
   Update,
   Delete,
 } = require("../controllers/itemController");
-const { protectAdmin } = require("../../middleware/authorization");
+const { protectAgent } = require("../../middleware/authorization");
 
 router.post("/", protectAgent, Create);
 router.get("/", ReadAll);
