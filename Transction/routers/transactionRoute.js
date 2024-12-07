@@ -11,7 +11,7 @@ const {
 } = require("../controllers/transactionController");
 const { protectAgent } = require("../../middleware/authorization");
 
-router.post("/", Create);
+router.post("/", protectAgent, Create);
 router.get("/", ReadAll);
 router.get("/ReadAllByAgent", protectAgent, ReadAllByAgent);
 router.get("/ReadOneByAgent", protectAgent, ReadOneByAgent);

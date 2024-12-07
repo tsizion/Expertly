@@ -29,6 +29,7 @@ const checkReferencesExist = async (
 };
 
 // Create a new transaction
+// Create a new transaction
 exports.Create = async (req, res) => {
   try {
     const {
@@ -40,8 +41,9 @@ exports.Create = async (req, res) => {
       amountBought,
       transactionValueInBirr,
       transactionType,
-      agentId, // Include agentId in the request body
     } = req.body;
+
+    const agentId = req.agent.id; // Automatically set the agentId from the request
 
     // Check if the references (seller, buyer, items, and agent) exist
     await checkReferencesExist(seller, buyer, itemSold, itemBought, agentId);
@@ -55,7 +57,7 @@ exports.Create = async (req, res) => {
       amountBought,
       transactionValueInBirr,
       transactionType,
-      agentId, // Add agentId to the new transaction
+      agentId, // Use the agentId extracted from the request
       status: "Pending", // Default status is Pending
     });
 

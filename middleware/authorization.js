@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const AppError = require("../ErrorHandlers/appError");
 const Admin = require("../admin/models/adminModel");
+const Agent = require("../Agent/models/Agent");
 
 // Middleware to protect routes for user authentication
 
@@ -29,12 +30,14 @@ exports.protectAgent = async (req, res, next) => {
 
     // Extracting agent id from the token payload
     const agentId = decoded.id;
+    console.log(agentId);
 
     // Find the agent using the retrieved id
-    const agent = await Agent.findById(agentId).populate("station"); // You can populate station if needed
+    const agent = await Agent.findById(agentId); // You can populate station if needed
     if (!agent) {
       return next(new AppError("Agent not found.", 404));
     }
+    console.log(agent);
 
     // Attach the agent to the request object for use in subsequent middleware or route handlers
     req.agent = agent;
