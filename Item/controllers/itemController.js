@@ -16,9 +16,9 @@ exports.Create = catchAsync(async (req, res, next) => {
 
   //Check if seller exists
   const sellerExists = await Farmer.findById(seller);
-  // if (!sellerExists) {
-  //   return next(new AppError("Seller not found", 404));
-  // }
+  if (!sellerExists) {
+    return next(new AppError("Seller found", 200));
+  }
 
   // Get agentId from the authenticated agent
   const agentId = req.agent.id; // Assuming req.agent.id holds the authenticated agent's ID
