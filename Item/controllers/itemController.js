@@ -14,8 +14,8 @@ exports.Create = catchAsync(async (req, res, next) => {
 
   const { seller, name, quantity, imageUrls } = req.body;
 
-  // Check if seller exists
-  // const sellerExists = await Farmer.findById(seller);
+  //Check if seller exists
+  const sellerExists = await Farmer.findById(seller);
   // if (!sellerExists) {
   //   return next(new AppError("Seller not found", 404));
   // }
