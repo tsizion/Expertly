@@ -12,7 +12,7 @@ const {
 const { protectAgent } = require("../../middleware/authorization");
 
 router.post("/", Create); // Protecting the Create route
-router.post("/AcceptRequest", protectAgent, AcceptRequest); // Protecting the Create route
+router.post("/AcceptRequest/:id", protectAgent, AcceptRequest); // Protecting the Create route
 
 router.get("/", ReadAll);
 router.get("/Pending", GetPendingRequests);
