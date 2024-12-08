@@ -9,7 +9,7 @@ const {
 } = require("../controllers/equipmentController");
 const { protectAgent } = require("../../middleware/authorization");
 
-router.post("/", protectAgent, Create);
+router.post("/", Create);
 router.get("/", ReadAll);
 router.get("/:id", ReadOne);
 router.patch("/:id", Update);

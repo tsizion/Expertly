@@ -12,7 +12,7 @@ exports.Create = catchAsync(async (req, res, next) => {
     return next(new AppError("Validation failed", 400, errors.array()));
   }
 
-  const { seller, name, quantity, priceInBirr, imageUrls } = req.body;
+  const { seller, name, quantity, imageUrls } = req.body;
 
   // Check if seller exists
   const sellerExists = await Farmer.findById(seller);
@@ -39,7 +39,7 @@ exports.Create = catchAsync(async (req, res, next) => {
     agentId, // Added the agentId here
     name,
     quantity,
-    priceInBirr,
+
     imageUrls, // Handle image URLs here
   });
 

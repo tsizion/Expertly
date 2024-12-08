@@ -16,11 +16,7 @@ const equipmentSchema = new mongoose.Schema(
       enum: ["New", "Used"],
       required: [true, "Condition of the equipment is required"],
     },
-    seller: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Farmer", // Reference to the farmer selling this equipment
-      required: [true, "Seller reference is required"],
-    },
+
     price: {
       type: Number, // Price in digital birr or cash
       required: [true, "Price is required"],

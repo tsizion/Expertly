@@ -1,26 +1,19 @@
 const Equipment = require("../models/equipment"); // Assuming this is the Equipment model
 const catchAsync = require("../../ErrorHandlers/catchAsync"); // For error handling
+const Farmer = require("../../Farmer/models/farmerModel");
 
 // Create a new Equipment
 exports.Create = catchAsync(async (req, res) => {
-  const { name, type, condition, seller, price, description, imageUrls } =
-    req.body;
+  const { name, type, condition, price, description, imageUrls } = req.body;
 
   // Check if the seller exists
-  const existingSeller = await Farmer.findById(seller);
-  if (!existingSeller) {
-    return res.status(400).json({
-      status: "fail",
-      message: "Seller not found. Please provide a valid seller ID.",
-    });
-  }
 
   // Create the equipment
   const equipment = await Equipment.create({
     name,
     type,
     condition,
-    seller,
+
     price,
     description,
     imageUrls,
