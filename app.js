@@ -6,8 +6,10 @@ const connectDB = require("./Config/DB");
 const globalErrorHandler = require("./ErrorHandlers/errorController");
 const AppError = require("./ErrorHandlers/appError");
 const bodyParser = require("body-parser");
-const cors = require("cors");
+const http = require("http");
 
+const cors = require("cors");
+const Server = require("socket.io").Server;
 dotenv.config();
 
 const app = express();
@@ -19,21 +21,48 @@ app.use(mongoSanitize());
 app.use(bodyParser.json());
 
 connectDB();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
+io.on("connection", (socket) => {
+  console.log("connected");
 
-app.use("/api/v1/station", require("./station/routers/StationRouter"));
-app.use("/api/v1/agent", require("./Agent/routers/agentRouter"));
-app.use("/api/v1/farmer", require("./Farmer/routers/farmerRoute"));
-app.use("/api/v1/sell", require("./Request/routers/sellingreqRouter"));
-app.use("/api/v1/item", require("./Item/routers/ItemRouter"));
-app.use("/api/v1/buy", require("./Request/routers/buyingrouter"));
-app.use("/api/v1/equipment", require("./Equipment/routers/equipment"));
+  const loadMessages = async () => {
+    try {
+      const messages = await Chat.find().sort({ timeStamp: 1 }).exec();
+      socket.emit("chat", messages);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  loadMessages();
 
-app.use(
-  "/api/v1/transaction",
-  require("./Transction/routers/transactionRoute")
-);
+  socket.on("newMessage", async (msg) => {
+    try {
+      const newMessage = new Chat(msg);
+      await newMessage.save();
+      io.emit("message", msg);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("disconnect");
+  });
+});
+// app.use("/api/v1/station", require("./station/routers/StationRouter"));
+app.use("/api/v1/expert", require("./Expert/routers/expertRouter"));
+app.use("/api/v1/client", require("./Client/routers/ClientRouter"));
 app.use("/api/v1/login", require("./Login/Router/Login"));
-app.use("/api/v1/admin", require("./admin/routers/adminRouter"));
+app.use("/api/v1/category", require("./Category/routers/CategoryRouter"));
+app.use(
+  "/api/v1/ConsultationPackage",
+  require("./Consultation/routers/consultationPackage")
+);
 
 // Default route
 app.get("/", (req, res) => {

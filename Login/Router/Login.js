@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { LoginAgent, LoginAdmin } = require("../Controller/login");
+const { LoginExpert, LoginAdmin, LoginClient } = require("../Controller/login");
 
-router.post("/Agent", LoginAgent); // Read all users
+router.post("/Expert", LoginExpert); // Read all users
 router.post("/Admin", LoginAdmin); // Read all users
+router.post("/Client", LoginClient); // Read all users
 
 module.exports = router;
