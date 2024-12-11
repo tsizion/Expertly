@@ -59,6 +59,8 @@ app.use("/api/v1/expert", require("./Expert/routers/expertRouter"));
 app.use("/api/v1/client", require("./Client/routers/ClientRouter"));
 app.use("/api/v1/login", require("./Login/Router/Login"));
 app.use("/api/v1/category", require("./Category/routers/CategoryRouter"));
+app.use("/api/v1/payment", require("./payment/paymentRouter"));
+
 app.use(
   "/api/v1/ConsultationPackage",
   require("./Consultation/routers/consultationPackage")

@@ -7,6 +7,7 @@ const {
   Update,
   Delete,
   readOneByClient,
+  DeleteByAdmin,
 } = require("../controllers/ClientControllers");
 const {
   protectAdmin,
@@ -18,6 +19,7 @@ router.get("/readOneByClient", protectClient, readOneByClient);
 router.get("/", ReadAll);
 router.get("/:id", ReadOne);
 router.patch("/", protectClient, Update);
+router.delete("/", protectClient, Delete);
 router.delete("/:id", Delete);
 
 module.exports = router;

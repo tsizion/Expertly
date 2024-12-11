@@ -33,30 +33,45 @@ const expertSchema = new mongoose.Schema(
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Category", // Links to the Category model
+      ref: "Category",
       required: [true, "Category is required"],
     },
     title: {
-      type: String, // e.g., "Senior Software Developer"
+      type: String,
       required: [true, "Title is required"],
     },
     specialization: [
       {
-        type: String, // Array of strings for areas of expertise
+        type: String,
         required: [true, "At least one specialization is required"],
       },
     ],
     cv: {
-      type: String, // URL or path to CV file
+      type: String,
       required: [true, "CV is required"],
     },
     license: {
-      type: String, // URL or path to license file
+      type: String,
       required: [true, "License is required"],
     },
     profilePicture: {
-      type: String, // URL or path to profile picture
+      type: String,
       default: "default-profile.jpg",
+    },
+    status: {
+      type: String,
+      enum: ["Pending", "Approved", "Declined"],
+      default: "Pending",
+    },
+    languages: {
+      type: [String], // Array to hold up to 4 languages
+      validate: {
+        validator: function (v) {
+          return v.length <= 4; // Ensure no more than 4 languages
+        },
+        message: "You can select up to 4 languages.",
+      },
+      required: [true, "At least one language is required"],
     },
   },
   { timestamps: true }

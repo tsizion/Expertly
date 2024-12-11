@@ -6,7 +6,7 @@ const {
   ReadOne,
   Update,
   Delete,
-} = require("../controllers/stationController");
+} = require("../controllers/AppointmentController");
 
 router.post("/", Create);
 router.get("/", ReadAll);

@@ -4,7 +4,6 @@ const { validationResult } = require("express-validator");
 const AppError = require("../../ErrorHandlers/appError");
 const catchAsync = require("../../ErrorHandlers/catchAsync");
 // Create a new client
-
 exports.Create = catchAsync(async (req, res, next) => {
   const {
     firstName,
@@ -129,6 +128,23 @@ exports.Update = catchAsync(async (req, res, next) => {
 
 // Delete a client
 exports.Delete = catchAsync(async (req, res, next) => {
+  const id = req.client.id; // Get the client ID from the authenticated client's token
+
+  const client = await Client.findByIdAndDelete(id);
+
+  if (!client) {
+    return next(new AppError("Client not found", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: "Client successfully deleted",
+    data: {
+      deletedClient: client,
+    },
+  });
+});
+exports.DeleteByAdmin = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
   const client = await Client.findByIdAndDelete(id);

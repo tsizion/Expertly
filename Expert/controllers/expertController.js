@@ -16,12 +16,13 @@ exports.Create = catchAsync(async (req, res, next) => {
     email,
     phoneNumber,
     password,
-    category, // The category ID provided by the client
+    category,
     title,
     specialization,
     cv,
     license,
     profilePicture,
+    languages, // New languages field
   } = req.body;
 
   // Check if the category exists
@@ -31,16 +32,17 @@ exports.Create = catchAsync(async (req, res, next) => {
       new AppError("Category not found. Please provide a valid category.", 404)
     );
   }
-  const emailExists = await Client.findOne({ email });
+  const emailExists = await Expert.findOne({ email });
   if (emailExists) {
     return next(new AppError("Email is already in use", 400));
   }
 
   // Check if phone number already exists
-  const phoneExists = await Client.findOne({ phoneNumber });
+  const phoneExists = await Expert.findOne({ phoneNumber });
   if (phoneExists) {
     return next(new AppError("Phone number is already in use", 400));
   }
+
   // Create a new expert
   const newExpert = await Expert.create({
     firstName,
@@ -54,6 +56,7 @@ exports.Create = catchAsync(async (req, res, next) => {
     cv,
     license,
     profilePicture,
+    languages, // Include languages in the creation
   });
 
   res.status(201).json({
@@ -162,6 +165,41 @@ exports.ReadOneByExpert = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
+    data: {
+      expert,
+    },
+  });
+});
+
+// Update Expert Status
+exports.ChangeStatus = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  // Validate the status value
+  if (!["Pending", "Approved", "Declined"].includes(status)) {
+    return next(
+      new AppError(
+        "Invalid status value. Allowed values are Pending, Approved, Declined.",
+        400
+      )
+    );
+  }
+
+  // Find and update the expert's status
+  const expert = await Expert.findByIdAndUpdate(
+    id,
+    { status },
+    { new: true, runValidators: true }
+  );
+
+  if (!expert) {
+    return next(new AppError("Expert not found", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: `Expert status updated to ${status}`,
     data: {
       expert,
     },
